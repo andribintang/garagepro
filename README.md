@@ -1,65 +1,102 @@
 # GARAGE PRO
 
-**Workshop Management System V1**
-
-GARAGE PRO adalah aplikasi manajemen bengkel motor berbasis web/PWA yang dirancang untuk mengelola operasional bengkel secara terintegrasi, mulai dari data pelanggan dan kendaraan, inspeksi, Work Order, service, spare part, inventory, purchasing, invoice, pembayaran, hingga service history dan reporting.
-
-> **Status:** Development / V1  
-> **Repository:** `andribintang/garagepro`  
-> **Default Branch:** `main`
+> **Workshop Management System V1**  
+> Sistem manajemen bengkel motor umum berbasis web untuk mengelola customer, kendaraan, inspeksi, Work Order, mekanik, spare part, inventory, invoice, pembayaran, laporan, dan service history.
 
 ---
 
-## 1. Vision
+## 🚀 Project Overview
 
-GARAGE PRO dibangun sebagai **single source of truth** untuk operasional bengkel.
+**GARAGE PRO** adalah aplikasi manajemen operasional bengkel motor yang dirancang untuk mengubah proses bengkel dari pencatatan manual menjadi workflow digital yang terstruktur, terukur, dan mudah digunakan.
 
-Tujuan utama:
-
-- Mempercepat proses penerimaan kendaraan.
-- Mengurangi kesalahan pencatatan Work Order.
-- Mengontrol penggunaan dan pergerakan spare part.
-- Memisahkan estimate, approval, pekerjaan aktual, invoice, dan pembayaran.
-- Menjaga histori service kendaraan secara lengkap.
-- Menyediakan dashboard dan laporan operasional yang dapat dipercaya.
-- Mendukung penggunaan desktop untuk admin/owner dan mobile untuk mekanik.
-- Menjadi fondasi ERP bengkel yang dapat dikembangkan ke V2.
-
----
-
-## 2. Core Business Flow
+### Core Flow
 
 ```text
-CUSTOMER
+Customer
    ↓
-VEHICLE
+Vehicle
    ↓
-INSPECTION
+Inspection / Diagnosis
    ↓
-WORK ORDER
+Work Order
    ↓
-SERVICE + SPARE PART
+Service + Spare Part
    ↓
-ESTIMATE
+Estimate
    ↓
-CUSTOMER APPROVAL
+Customer Approval
    ↓
-WORK
+Work Execution
    ↓
 QC
    ↓
-READY
+Ready
    ↓
-INVOICE
+Invoice
    ↓
-PAYMENT
+Payment
    ↓
-COMPLETED
+Completed
    ↓
-SERVICE HISTORY
+Service History
 ```
 
-### Work Order State Machine
+---
+
+## 🎯 Project Goals
+
+GARAGE PRO dibangun dengan tujuan:
+
+- Mempercepat proses penerimaan kendaraan.
+- Mengurangi kesalahan pencatatan service dan spare part.
+- Mengontrol penggunaan dan stok spare part secara real-time.
+- Memisahkan proses estimate, approval, execution, invoicing, dan payment.
+- Menyediakan service history kendaraan.
+- Menyediakan kontrol akses berdasarkan role.
+- Menyediakan audit trail untuk aktivitas penting.
+- Menjadi fondasi ERP/Workshop Management yang dapat dikembangkan ke multi-branch.
+
+---
+
+## 🧩 Main Modules
+
+### 1. Authentication & RBAC
+- Login / logout
+- Session management
+- Role & permission
+- Protected routes
+- Audit login/activity
+
+### 2. Customer Management
+- Customer CRUD
+- Customer search
+- Customer history
+- Contact information
+
+### 3. Vehicle Management
+- Data kendaraan
+- Nomor polisi
+- Brand / model
+- Tahun
+- Kilometer
+- Relasi customer
+- Service history
+
+### 4. Master Data
+- Service category
+- Service
+- Part category
+- Spare part
+- Mechanic
+- Supplier
+- Warehouse
+- Warehouse location
+- Inspection item
+
+### 5. Work Order
+Work Order merupakan core engine GARAGE PRO.
+
+Status utama:
 
 ```text
 NEW
@@ -69,116 +106,116 @@ CHECKING
 ESTIMATE
  ↓
 WAITING_APPROVAL
- ├── REJECTED
- └── APPROVED
-       ↓
-   IN_PROGRESS
-       ↓
-       QC
-      ├── REWORK → IN_PROGRESS
-      └── READY
-           ↓
-        INVOICED
-           ↓
-          PAID
-           ↓
-       COMPLETED
+ ↓
+APPROVED
+ ↓
+IN_PROGRESS
+ ↓
+QC
+ ├── REWORK → IN_PROGRESS
+ ↓
+READY
+ ↓
+INVOICED
+ ↓
+PAID
+ ↓
+COMPLETED
 ```
 
----
+Status tambahan:
 
-## 3. Main Modules
+```text
+REJECTED
+CANCELLED
+```
 
-### Master Data
-
-- Customer
-- Vehicle
-- Mechanic
-- Service Category
-- Service
-- Part Category
-- Spare Part
-- Supplier
-- Warehouse
-- Warehouse Location
-- Inspection Item
-
-### Workshop
-
-- Work Order
-- Inspection
+### 6. Inspection & Diagnosis
+- Checklist inspeksi
 - Diagnosis
-- Service
-- Spare Part
-- Recommendation
-- Additional Work
-- Customer Approval
-- Mechanic Assignment
-- QC
-- Rework
-- Service History
+- Catatan mekanik
+- Temuan kerusakan
+- Rekomendasi pekerjaan
+- Additional work
 
-### Inventory
-
-- Multi Warehouse
-- Stock Balance
-- Stock Movement
-- Issue / Consumption
-- Return
+### 7. Inventory
+- Multi warehouse
+- Stock balance
+- Stock movement ledger
+- Stock issue
+- Stock return
 - Receiving
-- Stock Adjustment
-- Stock Opname
-- Stock Transfer
-- Minimum Stock Alert
-- Inventory Reconciliation
+- Adjustment
+- Stock opname
+- Stock transfer
+- Low stock alert
+- Inventory reconciliation
 
-### Purchasing
+**Prinsip utama:**
 
+> Inventory ledger adalah source of truth.
+
+Stock tidak berkurang ketika estimate dibuat. Stock berkurang ketika spare part benar-benar di-issue/consume.
+
+### 8. Purchasing
 - Supplier
 - Purchase
-- Purchase Items
+- Purchase item
 - Receiving
-- Stock Update
+- Stock update
+- Purchase history
 
-### Finance
-
-- Estimate
-- Invoice
-- Payment
-- Partial Payment
-- Outstanding
+### 9. Invoice & Payment
+- Invoice generation
+- Discount
+- Tax
+- Grand total
+- Partial payment
+- Multiple payment methods
+- Payment history
 - Receipt
-- Void / Refund
-- Revenue Report
-- Collection Report
+- Void / refund control
 
-### Reporting
+Payment methods:
 
-- Dashboard
+```text
+CASH
+TRANSFER
+QRIS
+DEBIT_CARD
+CREDIT_CARD
+OTHER
+```
+
+### 10. Reports & Dashboard
 - Revenue
-- Work Order
-- Service
-- Spare Part
-- Mechanic Performance
+- Collection
+- Outstanding
+- Work Orders
+- Services
+- Spare Parts
+- Mechanic performance
 - Stock
-- Outstanding Payment
+- Low stock
+- Purchasing
+- Operational dashboard
 
 ---
 
-## 4. User Roles
+## 👥 User Roles
 
-| Role | Primary Responsibility |
+| Role | Main Responsibility |
 |---|---|
-| OWNER | Monitoring, reporting, configuration, full business control |
-| ADMIN | Customer, vehicle, WO, invoice, payment, operational administration |
-| MECHANIC | Inspection, diagnosis, service execution, spare part usage, QC |
-| WAREHOUSE | Inventory, receiving, issue, return, stock opname, transfer |
+| OWNER | Dashboard, reports, configuration, full control |
+| ADMIN | Customer, vehicle, WO, invoice, payment |
+| MECHANIC | Inspection, diagnosis, service execution, QC |
+| WAREHOUSE | Inventory, receiving, issue, return, stock opname |
 
-Semua akses harus melalui **RBAC (Role-Based Access Control)**.
+Permission-based authorization digunakan di seluruh backend dan frontend.
 
 ---
 
-## 5. Technology Stack
+## 🏗️ Technology Stack
 
 ### Frontend
 
@@ -201,76 +238,44 @@ Semua akses harus melalui **RBAC (Role-Based Access Control)**.
 - TypeScript
 - Sequelize
 - MySQL 8+
-- JWT / Session Authentication
+- JWT / session authentication
 - bcrypt / Argon2
-- Pino Logger
+- Pino logging
 
 ### Infrastructure
 
-- Linux / Ubuntu LTS
-- Nginx
-- PM2
-- MySQL 8+
-- Cloudflare
-- HTTPS
-- Docker (optional)
-- GitHub
-
----
-
-## 6. High-Level Architecture
-
 ```text
-┌──────────────────────────────┐
-│           USER               │
-│ Desktop / Tablet / Mobile    │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│       React + Vite           │
-│       Tailwind + PWA         │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│       TanStack Query         │
-│         API Client           │
-└──────────────┬───────────────┘
-               │ HTTPS
-               ▼
-┌──────────────────────────────┐
-│       Express API            │
-│ Auth / RBAC / Validation     │
-│ Controllers / Services       │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│       Domain Services        │
-│ WO / Inventory / Finance     │
-│ Purchasing / Audit           │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│ Sequelize / Repository       │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│          MySQL 8+            │
-└──────────────────────────────┘
+Internet
+   ↓
+Cloudflare
+   ↓
+Nginx HTTPS
+   ↓
+React Frontend
+   ↓
+Node.js / Express API
+   ↓
+MySQL
 ```
 
+Production process manager:
+
+- PM2
+
+Optional:
+
+- Docker
+- CI/CD
+- Cloud object storage
+
 ---
 
-## 7. Repository Structure
+## 📁 Repository Structure
 
-Target repository structure:
+Target structure:
 
 ```text
-garagepro/
+garage-pro/
 │
 ├── frontend/
 │   ├── src/
@@ -278,11 +283,11 @@ garagepro/
 │   │   ├── components/
 │   │   ├── features/
 │   │   ├── layouts/
-│   │   ├── lib/
-│   │   ├── routes/
+│   │   ├── pages/
 │   │   ├── hooks/
-│   │   ├── types/
-│   │   └── styles/
+│   │   ├── lib/
+│   │   ├── services/
+│   │   └── types/
 │   ├── public/
 │   └── package.json
 │
@@ -293,9 +298,9 @@ garagepro/
 │   │   ├── middlewares/
 │   │   ├── models/
 │   │   ├── repositories/
+│   │   ├── routes/
 │   │   ├── services/
 │   │   ├── validators/
-│   │   ├── routes/
 │   │   ├── utils/
 │   │   └── app.ts
 │   ├── migrations/
@@ -321,8 +326,8 @@ garagepro/
 │   ├── GARAGE_PRO_TESTING_QA_V1.md
 │   └── GARAGE_PRO_DEPLOYMENT_PRODUCTION_OPERATIONS_V1.md
 │
-├── scripts/
 ├── infrastructure/
+├── scripts/
 ├── .github/
 ├── .gitignore
 ├── .editorconfig
@@ -332,328 +337,87 @@ garagepro/
 
 ---
 
-## 8. Database Principles
+## 📚 Documentation
 
-Database menggunakan **MySQL 8+ / InnoDB**.
+The `docs/` directory is the authoritative source for product, technical, business, and implementation requirements.
 
-Prinsip utama:
+### Architecture & Product
 
-1. Transaction data tidak boleh di-hard-delete.
-2. Master data menggunakan soft delete jika diperlukan.
-3. Stock movement bersifat immutable.
-4. Inventory ledger menjadi source of truth.
-5. Historical price harus disimpan sebagai snapshot.
-6. Invoice dan payment menggunakan perhitungan server-side.
-7. Paid Work Order tidak boleh diedit secara bebas.
-8. Perubahan penting harus masuk audit log.
-9. Transaksi inventory menggunakan database transaction dan row locking.
-10. Payment harus menggunakan concurrency protection.
-11. Nomor dokumen dibuat oleh server.
-12. Semua nominal uang menggunakan `DECIMAL`, bukan floating point.
+1. Master Development Specification
+2. Database Design & ERD
+3. API Specification
+4. UI/UX Screen Bible
+5. Design System
+6. Project Architecture
+
+### Business & Core Engine
+
+7. Business Rules
+8. Project Scaffold
+9. Database Migration
+10. Authentication & RBAC
+11. Master Data
+12. Work Order Engine
+13. Inventory Engine
+14. Invoice & Payment Engine
+
+### Delivery
+
+15. Frontend Integration
+16. Testing & QA
+17. Deployment & Production Operations
+
+> **Development rule:** source code must follow the requirements in `docs/`. If implementation conflicts with the documentation, update the documentation or explicitly document the decision before changing the core business behavior.
 
 ---
 
-## 9. Critical Business Rules
-
-### Inventory
-
-Estimate **tidak mengurangi stock**.
-
-Stock berkurang ketika spare part benar-benar:
-
-```text
-ISSUED / CONSUMED
-```
-
-Stock bertambah melalui:
-
-```text
-PURCHASE RECEIVING
-RETURN
-ADJUSTMENT IN
-```
-
-Stock berkurang melalui:
-
-```text
-ISSUE
-ADJUSTMENT OUT
-OPNAME ADJUSTMENT
-```
-
-### Financial
-
-Total invoice harus dihitung server:
-
-```text
-Subtotal
-- Line Discount
-- Document Discount
-+ Tax
-= Grand Total
-```
-
-Payment:
-
-```text
-Grand Total
-- Total Paid
-= Outstanding
-```
-
-Overpayment harus ditolak.
+## 🔐 Critical Business Rules
 
 ### Work Order
 
-Perubahan status hanya boleh melalui **state transition service**, bukan dengan update database langsung dari controller.
+- WO number generated by server.
+- WO status can only change through the state transition service.
+- Invalid status transitions must be rejected.
+- Paid/completed WO cannot be freely edited.
+- Cancellation must be audited.
+- Additional work requires customer approval when applicable.
+
+### Inventory
+
+- Stock movements are immutable.
+- Inventory uses ledger-based tracking.
+- Estimate does not reduce stock.
+- Issue/consume reduces stock.
+- Return increases stock.
+- Negative stock is not allowed unless explicitly configured.
+- Stock operations must use database transactions and row locking.
+- Inventory reconciliation must be possible from the ledger.
+
+### Financial
+
+- Invoice totals are calculated server-side.
+- Historical transaction prices are frozen.
+- Overpayment is rejected.
+- Payment operations are transactional.
+- Invoice/payment mutations require audit records.
+- Paid invoices cannot be silently modified.
+- Revenue, collection, and outstanding are separate metrics.
+
+### Security
+
+- Authentication is mandatory for protected endpoints.
+- Authorization is permission-based.
+- IDOR must be prevented.
+- Sensitive mutations must be audited.
+- Passwords must never be stored in plain text.
+- Secrets must come from environment variables.
+- MySQL must not be publicly exposed in production.
 
 ---
 
-## 10. API Convention
+## 🔄 Development Roadmap
 
-Base URL:
-
-```text
-/api/v1
-```
-
-Contoh:
-
-```http
-POST   /api/v1/auth/login
-GET    /api/v1/auth/me
-
-GET    /api/v1/customers
-POST   /api/v1/customers
-GET    /api/v1/customers/:id
-PATCH  /api/v1/customers/:id
-
-GET    /api/v1/work-orders
-POST   /api/v1/work-orders
-
-POST   /api/v1/work-orders/:id/inspection
-POST   /api/v1/work-orders/:id/services
-POST   /api/v1/work-orders/:id/parts
-POST   /api/v1/work-orders/:id/approve
-POST   /api/v1/work-orders/:id/start
-POST   /api/v1/work-orders/:id/qc
-POST   /api/v1/work-orders/:id/ready
-POST   /api/v1/work-orders/:id/invoice
-POST   /api/v1/work-orders/:id/complete
-
-GET    /api/v1/invoices
-POST   /api/v1/invoices/:id/payments
-
-GET    /api/v1/reports/revenue
-GET    /api/v1/reports/work-orders
-GET    /api/v1/reports/stock
-```
-
-API response harus konsisten dan memiliki error code yang dapat digunakan frontend.
-
----
-
-## 11. UI/UX Principles
-
-GARAGE PRO menggunakan pendekatan **Premium SaaS UI**.
-
-Inspirasi karakter:
-
-- Clean
-- Modern
-- Professional
-- Fast
-- Data-oriented
-- Mobile-first untuk mekanik
-- Desktop-first untuk admin/owner
-- Responsive
-- Accessible
-- Dark mode ready
-
-### Responsive Strategy
-
-```text
-Mobile
-  ↓
-Mechanic / Warehouse workflow
-
-Tablet
-  ↓
-Workshop operational workflow
-
-Desktop
-  ↓
-Admin / Owner / Reporting
-```
-
-Touch target minimum:
-
-```text
-44 × 44 px
-```
-
-Status, warning, success, error dan confirmation harus menggunakan visual feedback yang konsisten.
-
----
-
-## 12. Mobile Mechanic Experience
-
-Mekanik harus dapat melakukan pekerjaan utama tanpa menggunakan desktop.
-
-Prioritas mobile:
-
-```text
-My Work Orders
-      ↓
-Open Work Order
-      ↓
-Inspection
-      ↓
-Diagnosis
-      ↓
-Service
-      ↓
-Parts Used
-      ↓
-Additional Recommendation
-      ↓
-QC
-      ↓
-Complete
-```
-
-Interface harus meminimalkan:
-
-- typing
-- navigasi berulang
-- modal bertingkat
-- input yang tidak diperlukan
-
-Gunakan:
-
-- large action button
-- quick selection
-- searchable combobox
-- bottom action bar
-- status chips
-- confirmation dialog untuk aksi kritis
-
----
-
-## 13. Security
-
-Security baseline:
-
-- HTTPS
-- Secure authentication
-- Password hashing
-- JWT/session protection
-- RBAC
-- Input validation
-- IDOR protection
-- SQL injection protection
-- XSS protection
-- CSRF strategy jika diperlukan
-- Rate limiting
-- Secure headers
-- CORS whitelist
-- Request ID
-- Audit log
-- Secret melalui environment variable
-- Database tidak diekspos ke public internet
-
----
-
-## 14. Testing & QA
-
-GARAGE PRO menggunakan test pyramid:
-
-```text
-              E2E
-             /   \
-        Integration
-          /       \
-       API / Component
-          /       \
-           Unit
-```
-
-Critical areas:
-
-- Authentication
-- RBAC
-- Work Order state machine
-- Inventory
-- Invoice
-- Payment
-- Concurrency
-- Idempotency
-- Audit log
-- Service history
-
-### Release Gate
-
-Production release tidak boleh dilakukan jika:
-
-```text
-P0 > 0     ❌
-P1 > 0     ❌
-Critical test failed ❌
-Migration failed ❌
-Backup verification failed ❌
-Smoke test failed ❌
-```
-
-Target:
-
-```text
-P0 = 0
-P1 = 0
-Critical flows PASS
-```
-
----
-
-## 15. Production Architecture
-
-```text
-Internet
-   ↓
-Cloudflare
-   ↓
-Nginx / HTTPS
-   ├───────────────┐
-   ↓               ↓
-Frontend        Backend API
-React/PWA       Node/Express
-                    ↓
-                  MySQL
-                    ↓
-             Backup / Offsite
-```
-
-Initial server recommendation:
-
-```text
-4 vCPU
-8 GB RAM
-100+ GB SSD
-Ubuntu LTS
-```
-
-Untuk scale yang lebih besar:
-
-```text
-8+ vCPU
-16+ GB RAM
-200+ GB SSD
-```
-
----
-
-## 16. Development Roadmap
-
-Dokumentasi desain V1 telah dibagi menjadi beberapa fase:
+Current architecture/documentation baseline:
 
 ```text
 01  Master Development Specification     ✅
@@ -664,99 +428,227 @@ Dokumentasi desain V1 telah dibagi menjadi beberapa fase:
 06  Project Architecture                 ✅
 07  Business Rules                       ✅
 08  Project Scaffold                     ✅
-09  Database Migration + Seed            ✅
-10  Authentication + RBAC                ✅
+09  Database Migration + Seed             ✅
+10  Authentication + RBAC                 ✅
 11  Master Data                           ✅
 12  Work Order Engine                     ✅
 13  Inventory Engine                      ✅
-14  Invoice + Payment Engine              ✅
+14  Invoice + Payment Engine               ✅
 15  Frontend Integration                  ✅
 16  Testing + QA                          ✅
 17  Deployment + Production Operations    ✅
-
-18  Actual Source Code Implementation     🚧
-19  Staging Deployment                    ⏳
-20  UAT                                   ⏳
-21  Production Release                    ⏳
 ```
 
-**Next major objective: Phase 18 — Actual Source Code Implementation.**
-
----
-
-## 17. Documentation
-
-Seluruh keputusan arsitektur dan business rules harus mengacu pada dokumen di folder `docs/`.
-
-Urutan membaca yang direkomendasikan:
-
-1. `GARAGE_PRO_MASTER_DEVELOPMENT_SPECIFICATION_V1.md`
-2. `GARAGE_PRO_PROJECT_ARCHITECTURE_V1.md`
-3. `GARAGE_PRO_DATABASE_DESIGN_V1.md`
-4. `GARAGE_PRO_DATABASE_MIGRATION_V1.md`
-5. `GARAGE_PRO_BUSINESS_RULES_V1.md`
-6. `GARAGE_PRO_AUTH_RBAC_V1.md`
-7. `GARAGE_PRO_MASTER_DATA_V1.md`
-8. `GARAGE_PRO_WORK_ORDER_ENGINE_V1.md`
-9. `GARAGE_PRO_INVENTORY_ENGINE_V1.md`
-10. `GARAGE_PRO_INVOICE_PAYMENT_V1.md`
-11. `GARAGE_PRO_API_SPECIFICATION_V1.md`
-12. `GARAGE_PRO_FRONTEND_INTEGRATION_V1.md`
-13. `GARAGE_PRO_UI_UX_SCREEN_BIBLE_V1.md`
-14. `GARAGE_PRO_DESIGN_SYSTEM_V1.md`
-15. `GARAGE_PRO_TESTING_QA_V1.md`
-16. `GARAGE_PRO_DEPLOYMENT_PRODUCTION_OPERATIONS_V1.md`
-
----
-
-## 18. AI / Claude Code Development Rules
-
-GARAGE PRO dikembangkan dengan bantuan AI coding agent seperti Claude Code.
-
-AI coding agent **WAJIB**:
-
-1. Membaca dokumentasi di `docs/` sebelum implementasi.
-2. Tidak mengubah business rule tanpa alasan yang jelas.
-3. Tidak membuat asumsi yang bertentangan dengan specification.
-4. Mengikuti architecture layer.
-5. Menggunakan TypeScript strict.
-6. Memisahkan controller, service, repository dan validation.
-7. Tidak melakukan business logic kompleks di controller.
-8. Tidak melakukan direct database mutation dari frontend.
-9. Menggunakan API sebagai boundary antara frontend dan backend.
-10. Menggunakan transaction untuk critical financial/inventory operation.
-11. Menambahkan test untuk critical business logic.
-12. Menjaga backward compatibility terhadap API.
-13. Tidak menghapus data transaksi secara permanen.
-14. Menambahkan audit log untuk mutation penting.
-15. Tidak mengubah status Work Order secara langsung.
-16. Tidak mengurangi stock hanya karena estimate.
-17. Tidak menerima payment yang menyebabkan overpayment.
-18. Tidak mengedit invoice/payment yang sudah final tanpa workflow yang sesuai.
-19. Tidak menggunakan floating point untuk uang.
-20. Tidak melakukan silent failure.
-
-### Implementation Rule
-
-Jika terdapat konflik antara kode lama dan specification:
+### Next Phase — Actual Source Code
 
 ```text
-Business Rules
-      ↓
-Architecture
-      ↓
-API Contract
-      ↓
-Database Design
-      ↓
-Implementation
+18  Repository Bootstrap
+19  Database + Migration Implementation
+20  Authentication + RBAC Implementation
+21  Master Data Implementation
+22  Work Order Implementation
+23  Inventory Implementation
+24  Invoice + Payment Implementation
+25  Frontend Integration
+26  Automated Testing
+27  Staging Deployment
+28  UAT
+29  Production Release
 ```
-
-Kode harus disesuaikan dengan specification, bukan sebaliknya, kecuali terdapat keputusan teknis baru yang terdokumentasi.
 
 ---
 
-## 19. Git Workflow
+## 🧪 Quality Standards
+
+Before production release:
+
+- P0 defects = 0
+- P1 defects = 0
+- Critical business rules tested
+- RBAC tested
+- Inventory concurrency tested
+- Payment concurrency tested
+- Idempotency tested
+- Audit trail tested
+- Database migration tested
+- Backup/restore tested
+- API integration tested
+- Mobile responsive tested
+- Desktop responsive tested
+- Accessibility checked
+- Production smoke test passed
+
+### Golden Path
+
+The complete end-to-end test must support:
+
+```text
+Create Customer
+→ Create Vehicle
+→ Create WO
+→ Inspection
+→ Add Service
+→ Add Spare Part
+→ Estimate
+→ Approval
+→ Issue Part
+→ Start Work
+→ QC
+→ Ready
+→ Invoice
+→ Payment
+→ Complete
+→ Verify Service History
+→ Verify Inventory Ledger
+```
+
+---
+
+## 🧑‍💻 Development with AI / Claude Code
+
+GARAGE PRO is designed to be developed incrementally using AI coding agents such as Claude Code.
+
+### AI Development Rules
+
+AI coding agent MUST:
+
+1. Read relevant documents in `docs/` before implementing a module.
+2. Follow the existing architecture.
+3. Never invent business rules when requirements already exist.
+4. Never bypass service-layer business logic.
+5. Never directly mutate inventory balances without ledger movements.
+6. Never calculate final invoice/payment totals only on the frontend.
+7. Never bypass authorization.
+8. Add validation for every mutation endpoint.
+9. Add audit logging for important mutations.
+10. Add automated tests for critical business logic.
+11. Keep changes modular and reviewable.
+12. Avoid unnecessary dependencies.
+13. Preserve backward compatibility unless a breaking change is explicitly approved.
+
+### Recommended Implementation Order
+
+```text
+Database
+  ↓
+Models
+  ↓
+Repositories
+  ↓
+Domain Services
+  ↓
+Validators
+  ↓
+Controllers
+  ↓
+Routes
+  ↓
+API Tests
+  ↓
+Frontend API Client
+  ↓
+React Query
+  ↓
+Pages
+  ↓
+Forms / Tables / Components
+  ↓
+E2E Tests
+```
+
+---
+
+## 🛠️ Local Development
+
+Once the application scaffold is implemented:
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Database
+
+Recommended:
+
+```text
+MySQL 8+
+Database: garage_pro
+```
+
+Environment variables must be configured using `.env` files and must never be committed.
+
+Example:
+
+```env
+NODE_ENV=development
+PORT=4000
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=garage_pro
+DB_USER=garage_pro
+DB_PASSWORD=change-me
+
+JWT_SECRET=change-me
+```
+
+---
+
+## 🌐 API Convention
+
+Base API:
+
+```text
+/api/v1
+```
+
+Example:
+
+```text
+POST   /api/v1/auth/login
+GET    /api/v1/auth/me
+
+GET    /api/v1/customers
+POST   /api/v1/customers
+
+GET    /api/v1/vehicles
+POST   /api/v1/vehicles
+
+GET    /api/v1/work-orders
+POST   /api/v1/work-orders
+
+POST   /api/v1/work-orders/:id/inspection
+POST   /api/v1/work-orders/:id/approve
+POST   /api/v1/work-orders/:id/start
+POST   /api/v1/work-orders/:id/qc
+POST   /api/v1/work-orders/:id/ready
+POST   /api/v1/work-orders/:id/invoice
+POST   /api/v1/work-orders/:id/complete
+
+GET    /api/v1/invoices
+POST   /api/v1/invoices/:id/payments
+
+GET    /api/v1/dashboard/summary
+GET    /api/v1/reports/revenue
+```
+
+API response dan error format harus mengikuti `GARAGE_PRO_API_SPECIFICATION_V1.md`.
+
+---
+
+## 🌳 Git Workflow
 
 Recommended branch:
 
@@ -768,175 +660,195 @@ fix/*
 hotfix/*
 ```
 
-Contoh:
+Example:
 
 ```bash
-git checkout -b feature/auth-rbac
+git checkout -b feature/work-order-engine
 ```
 
 Commit convention:
 
 ```text
-feat: add customer module
-feat: implement work order engine
-fix: prevent payment overpayment
-fix: resolve stock concurrency issue
+feat: add work order creation
+feat: implement inventory issue
+fix: prevent invoice overpayment
+test: add payment concurrency tests
 refactor: improve inventory service
-test: add invoice calculation tests
-docs: update api specification
+docs: update API specification
 chore: update dependencies
 ```
 
-Pull Request harus menjelaskan:
-
-- What changed
-- Why
-- Impact
-- Database migration
-- API changes
-- Testing performed
-- Breaking changes
-
 ---
 
-## 20. Definition of Done
+## 🚢 Production
 
-Sebuah feature dianggap selesai jika:
+Recommended production architecture:
 
 ```text
-[ ] Business rule implemented
-[ ] Database migration ready
-[ ] API implemented
-[ ] Validation implemented
-[ ] Authorization implemented
-[ ] Frontend implemented
-[ ] Loading state
-[ ] Empty state
-[ ] Error state
-[ ] Success feedback
-[ ] Audit requirement checked
-[ ] Unit/API tests
-[ ] Integration test if applicable
-[ ] Responsive UI
-[ ] Mobile workflow tested
-[ ] Documentation updated
-[ ] No P0/P1 defect
+                    ┌───────────────┐
+                    │   Internet    │
+                    └───────┬───────┘
+                            ↓
+                    ┌───────────────┐
+                    │   Cloudflare  │
+                    └───────┬───────┘
+                            ↓
+                    ┌───────────────┐
+                    │     Nginx     │
+                    │ HTTPS / Proxy │
+                    └───────┬───────┘
+                            ↓
+             ┌──────────────┴──────────────┐
+             ↓                             ↓
+     ┌───────────────┐             ┌───────────────┐
+     │ React / PWA   │             │ Node / Express│
+     │ Static Assets │             │      API      │
+     └───────────────┘             └───────┬───────┘
+                                           ↓
+                                    ┌───────────────┐
+                                    │    MySQL 8    │
+                                    └───────┬───────┘
+                                            ↓
+                                    ┌───────────────┐
+                                    │ Backup/Offsite│
+                                    └───────────────┘
 ```
+
+Production deployment should use:
+
+- Ubuntu LTS
+- Nginx
+- Node.js LTS
+- MySQL 8+
+- PM2
+- HTTPS
+- Cloudflare
+- Firewall
+- Automated backup
+- Offsite backup
+- Monitoring
+- Release/rollback strategy
+
+See:
+
+`docs/GARAGE_PRO_DEPLOYMENT_PRODUCTION_OPERATIONS_V1.md`
 
 ---
 
-## 21. Golden Path
+## 📌 Definition of Done
 
-End-to-end Golden Path GARAGE PRO:
+A feature is considered complete only when:
 
 ```text
-Create Customer
-      ↓
-Create Vehicle
-      ↓
-Create Work Order
-      ↓
-Inspection
-      ↓
-Add Service
-      ↓
-Add Spare Part
-      ↓
-Create Estimate
-      ↓
-Customer Approval
-      ↓
-Issue Spare Part
-      ↓
-Mechanic Work
-      ↓
-QC
-      ↓
-READY
-      ↓
-Generate Invoice
-      ↓
-Payment
-      ↓
-PAID
-      ↓
-COMPLETED
-      ↓
-Service History Updated
+Requirement
+    ↓
+Database
+    ↓
+Migration
+    ↓
+Model
+    ↓
+Repository
+    ↓
+Service / Business Logic
+    ↓
+Validation
+    ↓
+API
+    ↓
+Authorization
+    ↓
+Audit
+    ↓
+Frontend
+    ↓
+Error Handling
+    ↓
+Automated Tests
+    ↓
+UI/UX Verification
+    ↓
+Documentation
+    ↓
+Done
 ```
 
-Golden Path harus selalu dapat dijalankan pada environment staging sebelum production release.
+A feature that only "works on the screen" is **not considered complete**.
 
 ---
 
-## 22. Project Principles
+## 📈 Future Roadmap
 
-GARAGE PRO mengikuti prinsip:
+Potential V2/V3 capabilities:
 
-> **Simple for users. Strict for transactions. Traceable for management.**
+- Multi-branch workshop
+- Multi-warehouse advanced
+- WhatsApp integration
+- Customer notification
+- Digital approval via WhatsApp
+- Online booking
+- QRIS payment integration
+- Loyalty program
+- Membership
+- Reminder service
+- Customer mobile app
+- Mechanic productivity analytics
+- Advanced purchasing
+- Accounting integration
+- Parts supplier integration
+- Marketplace / e-commerce integration
+- Advanced BI dashboard
+- AI-assisted diagnosis
+- AI service recommendation
 
-Artinya:
-
-- User interface harus sederhana.
-- Business transaction harus ketat.
-- Semua transaksi penting harus dapat ditelusuri.
-- Data operasional harus konsisten.
-- Sistem harus dapat menjelaskan dari mana sebuah angka berasal.
+These features should not be implemented in V1 unless explicitly approved.
 
 ---
 
-## 23. Current Repository
+## 📄 Project Status
+
+**Project:** GARAGE PRO  
+**Product:** Workshop Management System  
+**Version:** V1  
+**Status:** Architecture & Development Specification Complete → Source Code Implementation  
+**Primary Language:** TypeScript  
+**Database:** MySQL 8+  
+**Frontend:** React + Vite  
+**Backend:** Node.js + Express  
+
+---
+
+## 👤 Project
+
+**GARAGE PRO**
 
 Repository:
 
-`andribintang/garagepro`
-
-GitHub:
-
-https://github.com/andribintang/garagepro
+`https://github.com/andribintang/garagepro`
 
 ---
 
-## 24. License
+## ⚠️ Important
 
-Project ini merupakan proprietary software milik project owner.
+GARAGE PRO handles operational, inventory, and financial data.
 
-License dan penggunaan source code akan ditentukan secara terpisah.
+Therefore:
+
+> **Correctness and traceability are more important than implementation speed.**
+
+Any change involving:
+
+- Work Order status
+- Inventory
+- Invoice
+- Payment
+- Price
+- Customer approval
+- User permission
+- Audit trail
+
+must be treated as a **critical business change** and must include appropriate validation, transaction handling, testing, and auditability.
 
 ---
-
-## 25. Final Objective
-
-GARAGE PRO V1 harus menghasilkan sistem bengkel yang:
-
-```text
-FAST
-RELIABLE
-TRACEABLE
-SECURE
-MOBILE READY
-SCALABLE
-MAINTAINABLE
-```
-
-Dengan satu alur data terintegrasi:
-
-```text
-Customer
-   ↓
-Vehicle
-   ↓
-Work Order
-   ↓
-Inventory
-   ↓
-Invoice
-   ↓
-Payment
-   ↓
-Service History
-   ↓
-Reports
-```
 
 **GARAGE PRO — Workshop Management System V1**
